@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Gavin COM</title>
+    <script src="./public/js/flexible.js"></script>
+    <link rel="stylesheet" href="./public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./public/css/index.css">
+</head>
+
+<body>
+    <div class="body-box">
+        <div class="tool-bar">
+            <div class="select-data">
+                <div class="form-group">
+                    <label for="disabledSelect">选择串口</label>
+                    <select id="disabledSelect" class="form-control com">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="BaudRate">波特率</label>
+                    <input type="text" class="form-control" id="BaudRate" value="9600">
+                </div>
+            </div>
+            <div class="submit-data">
+                <button class="btn btn-primary btn-block btn-submit">确定</button>
+            </div>
+        </div>
+        <div class="content-box">
+            <div class="receive-box">
+                <div class="send-header">
+                    <label>接受信息</label>
+                </div>
+                <div class="receive-windows">
+                </div>
+            </div>
+
+            <div class="send-box">
+                <div class="send-header">
+                    <label>发送信息</label>
+                </div>
+                <div class="send-windows">
+                    <textarea class="input-send-data"></textarea>
+                </div>
+                <div class="send-btn">
+                    <div class="btn-box">
+                        <div class="btn btn-warning btn-send">发送信息</div>&nbsp&nbsp&nbsp
+                        <div class="btn btn-danger btn-reset">清空信息</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    window.$ = window.jQuery = require('./public/js/jquery.min.js');
+    let serialport = require('serialport');
+    let port = null;
+    serialport.list((err, ports) => {
+        for (let item of ports) {
+            $('.com').append(`<option>${item.comName}</option>`)
+        }
+        console.log(ports);
+    });
+    $('.btn-submit').click((data) => {
+        let COM = $('select option:selected').text();
+        let BaudRate = $('#BaudRate').val();
+        console.log(COM);
+        console.log(BaudRate);
+        port = new serialport(COM, {
+            baudRate: parseInt(BaudRate)
+        });
+        $('.receive-windows').text(`打开串口: ${COM}, 波特率: ${BaudRate}`);
+        $('.receive-windows').append('<br/>=======================================<br/>');
+        port.on('data', data => {
+            console.log(`DATA: ${data}`);
+            $('.receive-windows').append(data.toString());
+        });
+    });
+    // 点击发送信息
+    $('.btn-send').click(() => {
+        var sendData = $('.input-send-data').val();
+        if(port != {} && port != null){
+            console.log(`SendData: ${sendData}`);
+            port.write(sendData);
+        }
+    })
+    // 清空信息
+    $('.btn-reset').click(() => {
+        $('.input-send-data').val('');
+    })
+</script>
+
+</html>
