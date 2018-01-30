@@ -83,7 +83,7 @@
     // 点击发送信息
     $('.btn-send').click(() => {
         var sendData = $('.input-send-data').val();
-        if(port != {} && port != null){
+        if (port != {} && port != null) {
             console.log(`SendData: ${sendData}`);
             port.write(sendData);
         }

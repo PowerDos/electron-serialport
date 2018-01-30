@@ -1,0 +1,11 @@
+logs/
+node_modules/
+package-lock.json
+.idea/
+run/
+.DS_Store
+*.sw*
+*.un~
+.idea
+.vscode
+.vs
